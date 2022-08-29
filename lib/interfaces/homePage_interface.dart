@@ -308,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index){
-                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM yyyy').format(snapshot.data[index].dateTime), formatTime: DateFormat.Hm().format(snapshot.data[index].dateTime), name: snapshot.data[index].name, score: 0,);
+                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM').format(_dateTime), formatTime: DateFormat.Hm().format(_dateTime), name: snapshot.data[index].student_name, score: 0,);
                         // return QuestionCard(size : size, id : index+1, timer : snapshot.data[index].timer);
                       },
                     ),

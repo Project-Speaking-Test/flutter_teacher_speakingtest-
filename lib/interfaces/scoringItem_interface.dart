@@ -1,5 +1,8 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_teacher_speakingtest/models/question_model.dart';
+import 'package:flutter_teacher_speakingtest/models/score.dart';
+import 'package:flutter_teacher_speakingtest/models/test_detail.dart';
 import '../constants/color.dart';
 import '../constants/font.dart';
 
@@ -13,8 +16,26 @@ class ScoringItemPage extends StatefulWidget {
 
 class _ScoringItemPageState extends State<ScoringItemPage> {
 
+  final scoreController = TextEditingController();
+
+  Test audio  = Test();
+  AudioPlayer audioPlayer = AudioPlayer();
+  Question? question;
+
   var _counter = 1;
   var score = '';
+
+  // Future <void> getData () async {
+  //   audio = await getAnswer(_counter);
+  //   print(audio.answer);
+  // }
+  // @override
+  // void initState() {
+  //   getData();
+  //   super.initState();
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +187,15 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                                     shape: BoxShape.circle, color: Colors.green),
                                 child: IconButton(
                                   icon: Icon(Icons.play_arrow_outlined),
-                                  onPressed: () {},
+                                  onPressed: ()  async {
+                                    Source audioUrl;
+                                    audio = await getAnswer(_counter);
+                                    if (audio != null){
+                                      audioUrl = UrlSource(audio.answer.toString());
+                                      audioPlayer.play(audioUrl);
+                                      print(audio.answer);
+                                    }
+                                  },
                                   color: Colors.white,
                                   iconSize: 50,
                                 ),
@@ -191,21 +220,22 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                                 borderRadius:
                                 BorderRadius.all(Radius.circular(30))),
                             child: TextFormField(
+                              controller: scoreController,
                               keyboardType: TextInputType.number,
-                              validator: (text){
-                                if(text == null || text.isEmpty){
-                                  return "Can't be empty";
-                                }
-                                if (int.parse(text) >10){
-                                  return "Score can't be higher than 10";
-                                }
-                                return null;
-                              },
-                              onChanged: (text){
-                                setState(() {
-                                  score = text;
-                                });
-                              },
+                              // validator: (text){
+                              //   if(text == null || text.isEmpty){
+                              //     return "Can't be empty";
+                              //   }
+                              //   if (int.parse(text) >10){
+                              //     return "Score can't be higher than 10";
+                              //   }
+                              //   return null;
+                              // },
+                              // onChanged: (text){
+                              //   setState(() {
+                              //     score = text;
+                              //   });
+                              // },
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -234,6 +264,7 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                       child: Center(
                         child: InkWell(
                           onTap: () {
+                            postScoreItem(_counter, int.parse(scoreController.text));
                             Navigator.of(context).pop();
                           },
                           child: Row(
