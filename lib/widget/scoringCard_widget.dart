@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_teacher_speakingtest/models/test_detail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/color.dart';
 import '../constants/font.dart';
@@ -10,12 +12,15 @@ class ScoreCard extends StatelessWidget {
   String formattedDate;
   String formatTime;
   int score;
+  int id_test;
 
   ScoreCard({Key? key, required this.size, required this.name, required this.formattedDate,
-    required this.formatTime, required this.score}) : super(key: key);
+    required this.formatTime, required this.score, required this.id_test}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
       height: 70,
@@ -43,9 +48,7 @@ class ScoreCard extends StatelessWidget {
                         formattedDate,
                         style: dateFont,
                       ),
-                      SizedBox(
-                        width: 0.01 * size.width,
-                      ),
+
                       Text(
                         formatTime,
                         style: timeFont,
@@ -62,7 +65,7 @@ class ScoreCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -121,7 +124,11 @@ class ScoreCard extends StatelessWidget {
               decoration:
               BoxDecoration(shape: BoxShape.circle, color: secondaryColor),
               child: IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                  sharedPreferences.setInt('id_test', id_test);
+                  sharedPreferences.setString('formatDate', formattedDate);
+                  sharedPreferences.setString('formatTime', formatTime);
                   Navigator.of(context).pushNamed(ScoringItemPage.nameRoute);
                 },
                 icon: Icon(Icons.create_outlined),
@@ -139,7 +146,9 @@ class ScoreCard extends StatelessWidget {
               decoration:
               BoxDecoration(shape: BoxShape.circle, color: Colors.red),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  deleteTest(id_test);
+                },
                 icon: Icon(Icons.delete_outline_outlined),
                 color: Colors.white,
                 padding: const EdgeInsets.all(0),

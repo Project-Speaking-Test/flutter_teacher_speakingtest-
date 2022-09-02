@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_teacher_speakingtest/models/question_model.dart';
 import 'package:flutter_teacher_speakingtest/models/score.dart';
 import 'package:flutter_teacher_speakingtest/models/test_detail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/color.dart';
 import '../constants/font.dart';
 
@@ -24,6 +25,32 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
 
   var _counter = 1;
   var score = '';
+  String? formatDate;
+  String? formatTime;
+
+  getData ()async{
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    formatDate =sharedPreferences.getString('formatDate');
+    print(formatDate);
+    formatTime =sharedPreferences.getString('formatTime');
+    print(formatTime);
+    // if (id != null){
+    //   testDetail = await getTestDetail(id);
+    // }
+    // // testDetail = await getTestDetail(1);
+    //
+    //
+    // if (testDetail != null){
+    //   setState(() {
+    //     score = testDetail?[_counter-1].score;
+    //     question = testDetail?[_counter-1].question;
+    //   });
+    // }else{
+    //   score =0;
+    //   question = 'No Question';
+    // }
+  }
 
   // Future <void> getData () async {
   //   audio = await getAnswer(_counter);
@@ -65,14 +92,14 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "18 Juli 2022",
+                          "$formatDate",
                           style: headlineDate,
                         ),
                         const SizedBox(
                           width: 15,
                         ),
                         Text(
-                          "15 : 00",
+                          "$formatTime",
                           style: headlineDate,
                         ),
                       ],

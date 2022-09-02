@@ -17,6 +17,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
 
+  bool isLoading = false;
+
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passController = TextEditingController();
@@ -62,8 +64,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         topLeft: Radius.circular(50),
                       )
                   ),
-                  child: Column(
-                    children: [
+                  // child:  Column(
+                  child : isLoading ? Center(child : CircularProgressIndicator()) : Column(
+                  children: [
                       SizedBox(
                         height: 0.03 * size.height,
                       ),
@@ -189,9 +192,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: size.width,
                         child: TextButton(
                           onPressed: () async {
+                            isLoading = true;
+                            await createUser(nameController.text, emailController.text, passController.text);
                             SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
-                            createUser(nameController.text, emailController.text, passController.text);
                             if(sharedpreferences.getString('token') != null){
+                              isLoading = false;
                               Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
                             }
                           },

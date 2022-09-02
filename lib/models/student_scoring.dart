@@ -5,14 +5,14 @@ import 'package:http/http.dart' as http;
 
 class Student {
   int? id_test;
-  DateTime? dateTime;
+  String? datetime;
   int? id_student;
   String? student_name;
 
-  Student ({this.id_test, this.dateTime, this.id_student, this.student_name});
+  Student ({this.id_test, this.datetime, this.id_student, this.student_name});
   factory Student.fromJson(Map <String, dynamic> json) {
     return Student(
-      id_test: json['id_test'], dateTime: json['dateTime'], id_student: json['id_student'], student_name: json['student_name']
+      id_test: json['id_test'], datetime: json['datetime'], id_student: json['id_student'], student_name: json['student_name']
     );
   }
 }

@@ -17,6 +17,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
 
   final emailController = TextEditingController();
   final passController = TextEditingController();
@@ -62,7 +63,8 @@ class _LoginPageState extends State<LoginPage> {
                     topLeft: Radius.circular(50),
                   )
                 ),
-                child: Column(
+                child : isLoading ? Center(child : CircularProgressIndicator()) : Column(
+                  // child:  Column(
                   children: [
                     SizedBox(
                       height: 0.03 * size.height,
@@ -153,10 +155,12 @@ class _LoginPageState extends State<LoginPage> {
                       width: size.width,
                       child: TextButton(
                         onPressed: () async {
+                          isLoading = true;
                           SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
-                          loginUser( emailController.text, passController.text);
+                          await loginUser( emailController.text, passController.text);
                           var token = sharedpreferences.getString('token');
                           if(token != null){
+                            isLoading = false;
                             Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
                           }
                         },

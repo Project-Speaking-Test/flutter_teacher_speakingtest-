@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_teacher_speakingtest/models/student_scoring.dart';
+import 'package:flutter_teacher_speakingtest/models/total_score.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,19 +22,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
   DateTime _dateTime = DateTime.now();
   bool onpress = true;
+  int? id_test;
+  List<TotalScore>? totalScore;
+  List<Student>? listStudent;
+  String? formatFilterDate;
 
 
   late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
+    getData();
     setState(() {
 
     });
     super.initState();
     checkLoginStatus();
+  }
+  getData () async{
+    totalScore = await getTotalScore(id_test!);
+    listStudent = await getStudent(formatFilterDate!);
   }
 
   checkLoginStatus() async {
@@ -47,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('d MMM yyyy').format(_dateTime);
-    String formatFilterDate = DateFormat('yyyy-MM-d').format(_dateTime);
+    formatFilterDate = DateFormat('yyyy-MM-d').format(_dateTime);
 
     Size size = MediaQuery.of(context).size;
     return SafeArea(
@@ -106,7 +118,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             onpress
-                ? onPressInterfaces(size, formattedDate, formatFilterDate)
+                ? onPressInterfaces(size, formattedDate, formatFilterDate!)
                 : offPressInterfaces(size),
             Positioned(
                 bottom: 15,
@@ -308,7 +320,8 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index){
-                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM ').format(_dateTime), formatTime: DateFormat.Hm().format(_dateTime), name: snapshot.data[index].student_name, score: 0,);
+                        id_test = snapshot.data[index].id_test;
+                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM ').format(DateTime.parse(snapshot.data[index].datetime)), formatTime: DateFormat.Hm().format(DateTime.parse(snapshot.data[index].datetime)), name: snapshot.data[index].student_name, score: totalScore?[index].totalScore ?? 0, id_test : id_test?? 0);
                         // return QuestionCard(size : size, id : index+1, timer : snapshot.data[index].timer);
                       },
                     ),
@@ -360,6 +373,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 5,
             ),
+
             FutureBuilder(
               future: getQuestion(),
               builder: (BuildContext context, AsyncSnapshot snapshot){

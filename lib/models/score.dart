@@ -26,7 +26,7 @@ Future<ScoreItem> postScoreItem (int id, int score) async {
     'id_std' : id,
     'score' : score
   };
-  final respons = await http.patch(url, headers: header, body: body);
+  final respons = await http.patch(url, headers: header, body: jsonEncode(body));
   var jsonRespData = jsonDecode(respons.body);
   print(jsonRespData);
 
@@ -36,3 +36,4 @@ Future<ScoreItem> postScoreItem (int id, int score) async {
     throw Exception(jsonRespData['message']);
   }
 }
+

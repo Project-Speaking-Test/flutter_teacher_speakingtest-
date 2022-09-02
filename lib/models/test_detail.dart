@@ -29,3 +29,24 @@ Future <Test> getAnswer(int id) async {
     throw Exception(jsonData['message']);
   }
 }
+
+Future<void> deleteTest (int id) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  Uri url = Uri.parse('https://unudspeakingtest.com/test.php?api=delete');
+
+  var header = {
+    'Content-Type' : 'application/json',
+    'token' : sharedPreferences.getString('token').toString()
+  };
+  var body = {
+    'id_test' : id
+  };
+  final response = await http.delete(url, headers: header, body: body);
+  var jsonData = jsonDecode(response.body);
+  if (jsonData['status'] == 1){
+    print(jsonData);
+  } else {
+    throw Exception(jsonData['message']);
+  }
+
+}
