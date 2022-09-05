@@ -139,35 +139,35 @@ class _QuestionItemPageState extends State<QuestionItemPage> {
                             width: 300,
                             height: 100,
                             child: Center(
-                              // child: TextFormField(
-                              //   textAlign: TextAlign.center,
-                              //   controller: questionController,
-                              //   decoration: InputDecoration(
-                              //     focusedBorder: InputBorder.none,
-                              //     enabledBorder: InputBorder.none,
-                              //     hintText: 'Klik here to change question',
-                              //     hintStyle: hintText,
-                              //   ),
-                              // ),
-                              child: FutureBuilder(
-                                future: getQuestion(),
-                                builder: (BuildContext context, AsyncSnapshot snapshot){
-                                  if (snapshot.data == null){
-                                    return Container(
-                                      child: Center(
-                                        child: Text("Loading"),
-                                      ),
-                                    );
-                                  }else{
-                                    // questionItem =snapshot.data[_counter-1].question;
-                                    return Text(
-                                      snapshot.data[_counter-1].question,
-                                      style: headlineResultQuestion,
-                                      textAlign: TextAlign.center,
-                                    );
-                                  }
-                                },
+                              child: TextFormField(
+                                textAlign: TextAlign.center,
+                                controller: questionController,
+                                decoration: InputDecoration(
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  hintText: 'Klik here to change question',
+                                  hintStyle: hintText,
+                                ),
                               ),
+                              // child: FutureBuilder(
+                              //   future: getQuestion(),
+                              //   builder: (BuildContext context, AsyncSnapshot snapshot){
+                              //     if (snapshot.data == null){
+                              //       return Container(
+                              //         child: Center(
+                              //           child: Text("Loading"),
+                              //         ),
+                              //       );
+                              //     }else{
+                              //       // questionItem =snapshot.data[_counter-1].question;
+                              //       return Text(
+                              //         snapshot.data[_counter-1].question,
+                              //         style: headlineResultQuestion,
+                              //         textAlign: TextAlign.center,
+                              //       );
+                              //     }
+                              //   },
+                              // ),
                             ),
                           ),
                           SizedBox(

@@ -1,11 +1,11 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_teacher_speakingtest/models/question_model.dart';
 import 'package:flutter_teacher_speakingtest/models/score.dart';
 import 'package:flutter_teacher_speakingtest/models/test_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/color.dart';
 import '../constants/font.dart';
+import 'homePage_interface.dart';
 
 class ScoringItemPage extends StatefulWidget {
   static const nameRoute = '/scoringitempage';
@@ -19,14 +19,18 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
 
   final scoreController = TextEditingController();
 
-  Test audio  = Test();
+  // Test audio  = Test();
+  List<Test>? test;
   AudioPlayer audioPlayer = AudioPlayer();
-  Question? question;
 
   var _counter = 1;
-  var score = '';
   String? formatDate;
   String? formatTime;
+  int? id;
+  String? question;
+  int? score;
+  bool isLoading = true;
+  int? std;
 
   getData ()async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -35,6 +39,23 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
     print(formatDate);
     formatTime =sharedPreferences.getString('formatTime');
     print(formatTime);
+    id = sharedPreferences.getInt('id_test');
+    test = await getAnswer(id!);
+    print('dah dsni');
+    // testDetail = await getTestDetail(1);
+    if (test != null){
+      score = test?[_counter-1].score ?? 0;
+      question = test?[_counter-1].question;
+      std = test?[_counter-1].id_std;
+    }else{
+      score =0;
+      question = 'No Question';
+    }
+    isLoading = false;
+    setState(() {
+
+    });
+
     // if (id != null){
     //   testDetail = await getTestDetail(id);
     // }
@@ -56,11 +77,14 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
   //   audio = await getAnswer(_counter);
   //   print(audio.answer);
   // }
-  // @override
-  // void initState() {
-  //   getData();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    getData();
+    setState(() {
+
+    });
+    super.initState();
+  }
 
 
 
@@ -70,7 +94,7 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(
+        body:isLoading ? Center(child: CircularProgressIndicator(),) : Stack(
           children: [
             Container(
               padding: EdgeInsets.all(0.03 * size.height),
@@ -92,14 +116,14 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "$formatDate",
+                          formatDate!,
                           style: headlineDate,
                         ),
                         const SizedBox(
                           width: 15,
                         ),
                         Text(
-                          "$formatTime",
+                          formatTime!,
                           style: headlineDate,
                         ),
                       ],
@@ -125,6 +149,9 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                                 if(_counter !=1){
                                   _counter--;
                                 }
+                                question = test?[_counter-1].question;
+                                std = test?[_counter-1].id_std;
+                                print(std);
                               });
                             },
                             icon: Icon(Icons.keyboard_arrow_left_sharp),
@@ -164,6 +191,9 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                                 if (_counter != 10){
                                   _counter++;
                                 }
+                                question = test?[_counter-1].question;
+                                std = test?[_counter-1].id_std;
+                                print(std);
                               });
                             },
                             icon: Icon(Icons.keyboard_arrow_right_sharp),
@@ -188,24 +218,30 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                             width: 300,
                             height: 100,
                             child: Center(
-                              child: FutureBuilder(
-                                future: getQuestion(),
-                                builder: (context, AsyncSnapshot snapshot){
-                                  if (snapshot.data == null){
-                                    return Container(
-                                      child: Center(
-                                        child: Text("Loading"),
-                                      ),
-                                    );
-                                  }else{
-                                    return Text(
-                                      snapshot.data[_counter-1].question,
-                                      style: headlineResultQuestion,
-                                      textAlign: TextAlign.center,
-                                    );
-                                  }
-                                },
+                              child: Text(
+                                question!,
+                                // '123',
+                                style: headlineResultQuestion,
+                                textAlign: TextAlign.center,
                               ),
+                              // child: FutureBuilder(
+                              //   future: getQuestion(),
+                              //   builder: (context, AsyncSnapshot snapshot){
+                              //     if (snapshot.data == null){
+                              //       return Container(
+                              //         child: Center(
+                              //           child: Text("Loading"),
+                              //         ),
+                              //       );
+                              //     }else{
+                              //       return Text(
+                              //         snapshot.data[_counter-1].question,
+                              //         style: headlineResultQuestion,
+                              //         textAlign: TextAlign.center,
+                              //       );
+                              //     }
+                              //   },
+                              // ),
                             ),
                           ),
                           Center(
@@ -216,12 +252,17 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                                   icon: Icon(Icons.play_arrow_outlined),
                                   onPressed: ()  async {
                                     Source audioUrl;
-                                    audio = await getAnswer(_counter);
-                                    if (audio != null){
-                                      audioUrl = UrlSource(audio.answer.toString());
+                                    var answer = test?[_counter-1].answer;
+                                    if (answer!=null){
+                                      audioUrl = UrlSource(answer);
                                       audioPlayer.play(audioUrl);
-                                      print(audio.answer);
                                     }
+                                    // audioUrl =
+                                    // if (audio != null){
+                                    //   audioUrl = UrlSource(audio.answer.toString());
+                                    //   audioPlayer.play(audioUrl);
+                                    //   print(audio.answer);
+                                    // }
                                   },
                                   color: Colors.white,
                                   iconSize: 50,
@@ -291,8 +332,9 @@ class _ScoringItemPageState extends State<ScoringItemPage> {
                       child: Center(
                         child: InkWell(
                           onTap: () {
-                            postScoreItem(_counter, int.parse(scoreController.text));
-                            Navigator.of(context).pop();
+
+                            postScoreItem(std!, int.parse(scoreController.text));
+                            Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,

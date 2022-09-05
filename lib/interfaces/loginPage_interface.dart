@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final emailController = TextEditingController();
   final passController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,79 +64,55 @@ class _LoginPageState extends State<LoginPage> {
                     topLeft: Radius.circular(50),
                   )
                 ),
-                child : isLoading ? Center(child : CircularProgressIndicator()) : Column(
-                  // child:  Column(
-                  children: [
-                    SizedBox(
-                      height: 0.03 * size.height,
-                    ),
-                    Text(
-                      "Login Teacher",
-                      style: headlineTitle1,
-                    ),
-                    SizedBox(
-                      height: 0.03 * size.height,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 27),
-                      padding: const EdgeInsets.only(left: 25, right: 25,top: 25, bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Username",
-                            style: headlineHint,
-                          ),
-                          TextFormField(
-                            controller: emailController,
-                            decoration: InputDecoration(
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              hintText: 'userspeak@mail.com',
-                              hintStyle: hintText,
+                // child : isLoading ? Center(child : CircularProgressIndicator()) : Column(
+                  child:  Form(
+                    key: _formKey,
+                    child:isLoading ? Center(child : CircularProgressIndicator()) : Column(
+                    children: [
+                      SizedBox(
+                        height: 0.03 * size.height,
+                      ),
+                      Text(
+                        "Login Teacher",
+                        style: headlineTitle1,
+                      ),
+                      SizedBox(
+                        height: 0.03 * size.height,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 27),
+                        padding: const EdgeInsets.only(left: 25, right: 25,top: 25, bottom: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Username",
+                              style: headlineHint,
                             ),
-                          )
-                        ],
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 0,
-                            blurRadius: 1,
-                          )
-                        ]
-                      ),
 
-                    ),
-                    SizedBox(
-                      height: 0.02 * size.height,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 27),
-                      padding: const EdgeInsets.only(left: 25, right: 25,top: 25, bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Password",
-                            style: headlineHint,
-                          ),
-                          TextFormField(
-                            controller: passController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              hintText: '* * * * * * * * * * * ',
-                              hintStyle: hintText,
-                            ),
-                          )
-                        ],
-                      ),
-                      decoration: BoxDecoration(
+                            TextFormField(
+                              validator: (CurrentValue){
+                                var nonNullValue=CurrentValue??'';
+                                if(nonNullValue.isEmpty){
+                                  return ("username is required");
+                                }
+                                if(!nonNullValue.contains("@")){
+                                  return ("username should contains @");
+                                }
+                                return null;
+                              },
+
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                hintText: 'userspeak@mail.com',
+                                hintStyle: hintText,
+                              ),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(20)),
                           color: Colors.white,
                           boxShadow: [
@@ -145,60 +122,114 @@ class _LoginPageState extends State<LoginPage> {
                               blurRadius: 1,
                             )
                           ]
+                        ),
+
                       ),
-                    ),
-                    SizedBox(
-                      height: 0.03 * size.height,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 27),
-                      width: size.width,
-                      child: TextButton(
-                        onPressed: () async {
-                          isLoading = true;
-                          SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
-                          await loginUser( emailController.text, passController.text);
-                          var token = sharedpreferences.getString('token');
-                          if(token != null){
+                      SizedBox(
+                        height: 0.02 * size.height,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 27),
+                        padding: const EdgeInsets.only(left: 25, right: 25,top: 25, bottom: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Password",
+                              style: headlineHint,
+                            ),
+                            TextFormField(
+                              controller: passController,
+                              obscureText: true,
+                              validator: (CurrentValue){
+                                var nonNullValue=CurrentValue??'';
+                                if(nonNullValue.isEmpty){
+                                  return ("butuh password");
+                                }
+                                if(nonNullValue.length < 8){
+                                  return ("password terlalu pendek, minimal 8 karakter");
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                hintText: '* * * * * * * * * * * ',
+                                hintStyle: hintText,
+                              ),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(20)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 0,
+                                blurRadius: 1,
+                              )
+                            ]
+                        ),
+                      ),
+                      SizedBox(
+                        height: 0.03 * size.height,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 27),
+                        width: size.width,
+                        child: TextButton(
+                          onPressed: () async {
+                            isLoading = true;
+                            SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+                            await loginUser( emailController.text, passController.text);
+                            var token = sharedpreferences.getString('token');
                             isLoading = false;
-                            Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
-                          }
-                        },
-                        child: Text(
-                          "LOGIN",
-                          style: button1,
+                            if (_formKey.currentState!.validate() && sharedpreferences.getString('token')!= null) {
+                              Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
+                            }
+                            // else{
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //     const SnackBar(content: Text('Gagal Login')),
+                            //   );
+                            // }
+                          },
+                          child: Text(
+                            "LOGIN",
+                            style: button1,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius : const BorderRadius.all(Radius.circular(100)),
+                          gradient: gradientBackgroundColor,
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        borderRadius : const BorderRadius.all(Radius.circular(100)),
-                        gradient: gradientBackgroundColor,
+                      SizedBox(
+                        height: 0.02 * size.height,
                       ),
-                    ),
-                    SizedBox(
-                      height: 0.02 * size.height,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 27),
-                      width: size.width,
-                      child: TextButton(
-                        onPressed: (){
-                          Navigator.of(context).pushNamed(RegisterPage.nameRoute);
-                        },
-                        child: Text(
-                          "Register",
-                          style: button2,
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 27),
+                        width: size.width,
+                        child: TextButton(
+                          onPressed: (){
+                            Navigator.of(context).pushNamed(RegisterPage.nameRoute);
+                          },
+                          child: Text(
+                            "Register",
+                            style: button2,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius : const BorderRadius.all(Radius.circular(100)),
+                          border: Border.all(
+                            color: borderColor,
+                            width: 3,
+                          )
                         ),
                       ),
-                      decoration: BoxDecoration(
-                        borderRadius : const BorderRadius.all(Radius.circular(100)),
-                        border: Border.all(
-                          color: borderColor,
-                          width: 3,
-                        )
-                      ),
-                    ),
-                  ],
+                    ],
                 ),
+                  ),
               ),
             )
           ],

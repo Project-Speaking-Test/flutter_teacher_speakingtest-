@@ -17,10 +17,11 @@ Future<UserLogin> loginUser ( String email, String password) async {
 
   if (jsonRespData['status']==1){
     sharedPreferences.setString('token', jsonRespData['data']['token'].toString());
-    return UserLogin.fromJson(jsonRespData);
-  }else{
-    throw Exception('Failed to auth user');
+
+  // } else{
+  //   throw Exception('Failed to auth user');
   }
+    return UserLogin.fromJson(jsonRespData);
 }
 
 class UserLogin{

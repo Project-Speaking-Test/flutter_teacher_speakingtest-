@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/color.dart';
 import '../constants/font.dart';
+import '../interfaces/dialog_interface.dart';
 import '../interfaces/scoringItem_interface.dart';
 
 class ScoreCard extends StatelessWidget {
@@ -49,10 +50,10 @@ class ScoreCard extends StatelessWidget {
                         style: dateFont,
                       ),
 
-                      Text(
-                        formatTime,
-                        style: timeFont,
-                      )
+                      // Text(
+                      //   formatTime,
+                      //   style: timeFont,
+                      // )
                     ],
                   )
                 ],
@@ -129,7 +130,7 @@ class ScoreCard extends StatelessWidget {
                   sharedPreferences.setInt('id_test', id_test);
                   sharedPreferences.setString('formatDate', formattedDate);
                   sharedPreferences.setString('formatTime', formatTime);
-                  Navigator.of(context).pushNamed(ScoringItemPage.nameRoute);
+                  Navigator.of(context).pushReplacementNamed(ScoringItemPage.nameRoute);
                 },
                 icon: Icon(Icons.create_outlined),
                 color: Colors.white,
@@ -147,7 +148,11 @@ class ScoreCard extends StatelessWidget {
               BoxDecoration(shape: BoxShape.circle, color: Colors.red),
               child: IconButton(
                 onPressed: () async {
-                  deleteTest(id_test);
+                  showDialog(
+                      context: context,
+                      builder: (context) => DialogHapusData(
+                        id: id_test,
+                      ));
                 },
                 icon: Icon(Icons.delete_outline_outlined),
                 color: Colors.white,

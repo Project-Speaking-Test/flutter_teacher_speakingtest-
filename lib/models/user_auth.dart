@@ -5,18 +5,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<User> createUser (String name, String email, String password) async {
 
-  Uri url = Uri.parse("https://unudspeakingtest.com/student.php?api=signup");
+  Uri url = Uri.parse("https://unudspeakingtest.com/teacher.php?api=signup");
   var body = {'name': name, 'email': email, 'password': password};
   var header = {'Content-Type': 'application/json'};
   final respons = await http.post(url, body: jsonEncode(body), headers: header);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   var jsonRespData = jsonDecode(respons.body);
 
-  if (respons.statusCode ==201){
-    return User.fromJson(jsonRespData);
-  }else{
-    throw Exception('Failed to auth user');
+  if (jsonRespData['status']==1){
+    sharedPreferences.setString('token', jsonRespData['data']['token'].toString());
+    print(jsonRespData['data']['token']);
   }
+  // else{
+  //   throw Exception('Failed to auth user');
+  // }
+    return User.fromJson(jsonRespData);
 }
 
 class User{

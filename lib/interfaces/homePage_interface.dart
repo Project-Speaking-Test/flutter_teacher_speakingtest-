@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   DateTime _dateTime = DateTime.now();
   bool onpress = true;
   int? id_test;
-  List<TotalScore>? totalScore;
   List<Student>? listStudent;
   String? formatFilterDate;
 
@@ -44,7 +43,6 @@ class _HomePageState extends State<HomePage> {
     checkLoginStatus();
   }
   getData () async{
-    totalScore = await getTotalScore(id_test!);
     listStudent = await getStudent(formatFilterDate!);
   }
 
@@ -283,7 +281,11 @@ class _HomePageState extends State<HomePage> {
                                   bottomRight: Radius.circular(20),
                                 )),
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+
+                                });
+                              },
                               child: Text(
                                 "GO",
                                 style: headlineDate,
@@ -320,8 +322,9 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index){
+
                         id_test = snapshot.data[index].id_test;
-                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM ').format(DateTime.parse(snapshot.data[index].datetime)), formatTime: DateFormat.Hm().format(DateTime.parse(snapshot.data[index].datetime)), name: snapshot.data[index].student_name, score: totalScore?[index].totalScore ?? 0, id_test : id_test?? 0);
+                        return ScoreCard(size: size, formattedDate: DateFormat('d MMM ').format(DateTime.parse(snapshot.data[index].datetime)), formatTime: DateFormat.Hm().format(DateTime.parse(snapshot.data[index].datetime)), name: snapshot.data[index].student_name, score: snapshot.data[index].total_score ?? 0, id_test : id_test?? 0);
                         // return QuestionCard(size : size, id : index+1, timer : snapshot.data[index].timer);
                       },
                     ),

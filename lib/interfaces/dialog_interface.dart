@@ -4,6 +4,7 @@ import '../interfaces/loginPage_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/question_model.dart';
+import '../models/test_detail.dart';
 
 class DialogLogOut extends StatelessWidget {
   SharedPreferences sharedPreferences;
@@ -48,6 +49,33 @@ class DialogHapus extends StatelessWidget {
           child: Text('Yes'),
           onPressed: () {
             updateQuestion(id, '', 0);
+            Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
+          },
+        ),
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('No'))
+      ],
+    );
+  }
+}
+class DialogHapusData extends StatelessWidget {
+  int id;
+
+  DialogHapusData({Key? key, required this.id}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Delete Data'),
+      content: Text('Are you sure wanna delete this ?'),
+      actions: [
+        TextButton(
+          child: Text('Yes'),
+          onPressed: () {
+            deleteTest(id);
             Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
           },
         ),
